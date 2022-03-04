@@ -60,6 +60,9 @@
 #include "constants/songs.h"
 #include "constants/trainers.h"
 #include "cable_club.h"
+#include "switchteams.c"
+
+u8 switchedteams;
 
 extern const struct BgTemplate gBattleBgTemplates[];
 extern const struct WindowTemplate *const gBattleWindowTemplates[];
@@ -602,6 +605,7 @@ void CB2_InitBattle(void)
 static void CB2_InitBattleInternal(void)
 {
     s32 i;
+    u16 shouldSwap;
 
     SetHBlankCallback(NULL);
     SetVBlankCallback(NULL);
@@ -684,6 +688,15 @@ static void CB2_InitBattleInternal(void)
         if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS)
             CreateNPCTrainerParty(&gEnemyParty[PARTY_SIZE / 2], gTrainerBattleOpponent_B, FALSE);
         SetWildMonHeldItem();
+    }
+
+    shouldSwap = Random() % 2;
+    if (shouldSwap == 1) {
+        trySwitchParty();
+        switchedteams = 1;        
+    }
+    else {
+        switchedteams = 0;
     }
 
     gMain.inBattle = TRUE;

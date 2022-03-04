@@ -48,7 +48,7 @@
 #include "constants/weather.h"
 #include "switchteams.c"
 
-// u8 switchedteams;
+u8 switchedteams;
 
 enum {
     TRANSITION_TYPE_NORMAL,
@@ -393,7 +393,6 @@ void BattleSetup_StartWildBattle(void)
     if (GetSafariZoneFlag())
         DoSafariBattle();
     else {
-        trySwitchParty();
         DoStandardWildBattle();
     }
 }
@@ -617,9 +616,9 @@ static void CB2_EndWildBattle(void)
         SetMainCallback2(CB2_ReturnToField);
         gFieldCallback = FieldCB_ReturnToFieldNoScriptCheckMusic;
     }
-    // if (switchedteams == 1) {
-    switchBack();
-    // }
+    if (switchedteams == 1) {
+        switchBack();
+    }
 }
 
 static void CB2_EndScriptedWildBattle(void)
@@ -1321,7 +1320,6 @@ void BattleSetup_StartTrainerBattle(void)
     sShouldCheckTrainerBScript = FALSE;
     gWhichTrainerToFaceAfterBattle = 0;
     gMain.savedCallback = CB2_EndTrainerBattle;
-    trySwitchParty();
 
     if (InBattlePyramid() || InTrainerHillChallenge())
         DoBattlePyramidTrainerHillBattle();
@@ -1353,9 +1351,9 @@ static void CB2_EndTrainerBattle(void)
             SetBattledTrainersFlags();
         }
     }
-    // if (switchedteams == 1) {
-    switchBack();
-    // }
+    if (switchedteams == 1) {
+        switchBack();
+    }
 }
 
 static void CB2_EndRematchBattle(void)

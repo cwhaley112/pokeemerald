@@ -1,11 +1,10 @@
 #include "global.h"
 #include "pokemon.h"
 #include "pokedex.h"
-#include "random.h"
 #include "script_pokemon_util.h"
 
 static void switchParty(void);
-// u8 switchedteams;
+extern u8 switchedteams;
 
 static void EncryptBoxMon(struct BoxPokemon *boxMon)
 {
@@ -135,28 +134,24 @@ static u16 CalculateBoxMonChecksum(struct BoxPokemon *boxMon)
 }
 
 static void trySwitchParty(void) {
-    // u16 shouldSwitch = Random() % 2;
-    u16 shouldSwitch = 1;
-    if (shouldSwitch == 1) {
-        switchParty();
-        // switchedteams = 1;
-    }
+    switchParty();
 }
 
 static void switchBack(void) {
     switchParty();
     HealPlayerParty();
-    // switchedteams = 0;
 }
 
 // idk what encrypting/decrypting box mons does but man is it necessary
 static void switchParty(void) {
     s32 numMons = 6;
+    u8 playerMons = CalculatePlayerPartyCount();
     u8 enemyMons = CalculateEnemyPartyCount();
     s32 i;
     u16 dexNum;
     u32 personality;
     u16 checksum;
+
     struct Pokemon tempMon;
 
     u32 value;
@@ -168,10 +163,11 @@ static void switchParty(void) {
     for (i = 0; i < numMons; i++) {
         struct Pokemon *mon = &gEnemyParty[i];
         struct Pokemon *mon2= &gPlayerParty[i];
-        CopyMon(&tempMon, mon2, sizeof(*mon2)); // copy first member of my team to temp party
-        CopyMon(&gPlayerParty[i], mon, sizeof(*mon)); // copy opponent mon to my party
-        CopyMon(&gEnemyParty[i], &tempMon, sizeof(&tempMon)); // copy my mon to opponent's party
+        tempMon = *mon2;
+        *mon2 = *mon;
+        *mon = tempMon;
         if (i < enemyMons) {
+            // overwrite OT data for my new team (so they obey me)
             mon = &gPlayerParty[i];
             DecryptBoxMon(&mon->box);
             SetBoxMonData(&mon->box, MON_DATA_OT_ID, &value);
@@ -181,12 +177,8 @@ static void switchParty(void) {
 
             SetBoxMonData(&mon->box, MON_DATA_OT_NAME, gSaveBlock2Ptr->playerName);
             SetBoxMonData(&mon->box, MON_DATA_OT_GENDER, &gSaveBlock2Ptr->playerGender);
-
-            // dexNum = SpeciesToNationalPokedexNum(GetMonData(&gPlayerParty[i], MON_DATA_SPECIES, 0));
-            // personality = GetMonData(&gPlayerParty[i], MON_DATA_PERSONALITY, 0);
-            // HandleSetPokedexFlag(dexNum, FLAG_SET_SEEN, personality);
-            // HandleSetPokedexFlag(dexNum, FLAG_SET_CAUGHT, personality);
         }
     }
     gPlayerPartyCount = enemyMons;
+    gEnemyPartyCount = playerMons;
 }
