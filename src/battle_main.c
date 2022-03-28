@@ -699,17 +699,16 @@ static void CB2_InitBattleInternal(void)
         // we lost the last battle and shouldn't re-roll
         // 1 means switch, 2 means don't
         if (switchedteams==1) shouldSwap=1;
-        else {
-            shouldSwap=0;
-            switchedteams=0;
+        else shouldSwap=0;
+    }
+    if (((gBattleTypeFlags == (BATTLE_TYPE_TRAINER)) | (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS) | (gBattleTypeFlags & BATTLE_TYPE_DOUBLE))) {
+        if (shouldSwap == 1) {
+            trySwitchParty();
+            switchedteams = 1; 
         }
-    }
-    if (((gBattleTypeFlags == (BATTLE_TYPE_TRAINER)) | (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS) | (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)) & (shouldSwap == 1)) {
-        trySwitchParty();
-        switchedteams = 1;        
-    }
-    else {
-        switchedteams = 0;
+        else {
+            switchedteams = 0;
+        }
     }
 
     gMain.inBattle = TRUE;
