@@ -616,9 +616,9 @@ static void CB2_EndWildBattle(void)
         SetMainCallback2(CB2_ReturnToField);
         gFieldCallback = FieldCB_ReturnToFieldNoScriptCheckMusic;
     }
-    if (switchedteams == 1) {
-        switchBack();
-    }
+    // if (switchedteams == 1) {
+    //     switchBack();
+    // }
 }
 
 static void CB2_EndScriptedWildBattle(void)
@@ -1353,6 +1353,19 @@ static void CB2_EndTrainerBattle(void)
     }
     if (switchedteams == 1) {
         switchBack();
+        if (IsPlayerDefeated(gBattleOutcome) == FALSE) {
+            // if we won, can re-roll RNG
+            switchedteams=0;
+        }
+    }
+    else {
+        if (IsPlayerDefeated(gBattleOutcome) == TRUE) {
+            // we lost with our own team, don't switch teams next battle
+            switchedteams=2;
+        }
+        else {
+            switchedteams=0;
+        }
     }
 }
 

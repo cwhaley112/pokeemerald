@@ -134,6 +134,7 @@ static u16 CalculateBoxMonChecksum(struct BoxPokemon *boxMon)
 }
 
 static void trySwitchParty(void) {
+    HealPlayerParty();
     switchParty();
 }
 

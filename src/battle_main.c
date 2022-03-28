@@ -690,8 +690,21 @@ static void CB2_InitBattleInternal(void)
         SetWildMonHeldItem();
     }
 
-    shouldSwap = Random() % 2;
-    if (shouldSwap == 1) {
+    if (switchedteams == 0) {
+        // we did not lose the previous battle --> next swap is RNG
+        shouldSwap = Random() % 2;
+        // shouldSwap = 1;
+    }
+    else {
+        // we lost the last battle and shouldn't re-roll
+        // 1 means switch, 2 means don't
+        if (switchedteams==1) shouldSwap=1;
+        else {
+            shouldSwap=0;
+            switchedteams=0;
+        }
+    }
+    if (((gBattleTypeFlags == (BATTLE_TYPE_TRAINER)) | (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS) | (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)) & (shouldSwap == 1)) {
         trySwitchParty();
         switchedteams = 1;        
     }
