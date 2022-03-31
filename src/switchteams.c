@@ -3,8 +3,9 @@
 #include "pokedex.h"
 #include "script_pokemon_util.h"
 
-static void switchParty(void);
+static void switchParty(u8 doubles);
 extern u8 switchedteams;
+u8 in_doubles;
 
 static void EncryptBoxMon(struct BoxPokemon *boxMon)
 {
@@ -133,35 +134,57 @@ static u16 CalculateBoxMonChecksum(struct BoxPokemon *boxMon)
     return checksum;
 }
 
-static void trySwitchParty(void) {
+static void trySwitchParty(u8 doubles) {
     HealPlayerParty();
-    switchParty();
+    in_doubles=0;
+    switchParty(doubles);
 }
 
 static void switchBack(void) {
-    switchParty();
+    // u8 playerMons;
+    switchParty(0);
+    in_doubles=0;
+    // playerMons = CalculatePlayerPartyCount();
+    // gPlayerPartyCount = playerMons; // recalc this because it gets 
     HealPlayerParty();
 }
 
 // idk what encrypting/decrypting box mons does but man is it necessary
-static void switchParty(void) {
+static void switchParty(u8 doubles) {
     s32 numMons = 6;
     u8 playerMons = CalculatePlayerPartyCount();
-    u8 enemyMons = CalculateEnemyPartyCount();
+    u8 enemyMons;
     s32 i;
     u16 dexNum;
     u32 personality;
     u16 checksum;
 
     struct Pokemon tempMon;
+    s32 teamArray[4] = {0, 1, 2, 3};
+    s32 oppArray[4] = {0, 4, 1, 4};
+    s32 oppArray2[4] = {0, 3, 4, 2};
 
     u32 value;
     value = gSaveBlock2Ptr->playerTrainerId[0]
               | (gSaveBlock2Ptr->playerTrainerId[1] << 8)
               | (gSaveBlock2Ptr->playerTrainerId[2] << 16)
               | (gSaveBlock2Ptr->playerTrainerId[3] << 24);
+    
+    if (in_doubles==1) {
+        for (i = 0; i < 4; i++) {
+            struct Pokemon *mon = &gEnemyParty[teamArray[i]];
+            struct Pokemon *mon2= &gEnemyParty[oppArray2[i]];
+            tempMon = *mon2;
+            *mon2 = *mon;
+            *mon = tempMon;
+        }
+    }
+    enemyMons = CalculateEnemyPartyCount(); // calc here cause can get messed up before we mix up a multi opponent's team 
 
     for (i = 0; i < numMons; i++) {
+        // bug in this code for 2 player double battles
+        // when that happens, should swap members as follows (me-enemy)
+        // 0-0, 1-3, 2-1, 3-4, 4-2, 5-5 then reverse that when switching back
         struct Pokemon *mon = &gEnemyParty[i];
         struct Pokemon *mon2= &gPlayerParty[i];
         tempMon = *mon2;
@@ -182,4 +205,15 @@ static void switchParty(void) {
     }
     gPlayerPartyCount = enemyMons;
     gEnemyPartyCount = playerMons;
+
+    if (doubles==1) {
+        for (i = 0; i < 4; i++) {
+            struct Pokemon *mon = &gEnemyParty[teamArray[i]];
+            struct Pokemon *mon2= &gEnemyParty[oppArray[i]];
+            tempMon = *mon2;
+            *mon2 = *mon;
+            *mon = tempMon;
+        }
+        in_doubles=1;
+    } 
 }

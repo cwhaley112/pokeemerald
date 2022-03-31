@@ -8,3 +8,4 @@ gMultiUsePlayerCursor
 gNumberOfMovesToChoose
 gBattleControllerData
 switchedteams
+in_doubles

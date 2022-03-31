@@ -703,7 +703,8 @@ static void CB2_InitBattleInternal(void)
     }
     if (((gBattleTypeFlags == (BATTLE_TYPE_TRAINER)) | (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS) | (gBattleTypeFlags & BATTLE_TYPE_DOUBLE))) {
         if (shouldSwap == 1) {
-            trySwitchParty();
+            if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS) trySwitchParty(1);
+            else trySwitchParty(0);
             switchedteams = 1; 
         }
         else {
