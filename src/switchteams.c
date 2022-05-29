@@ -141,11 +141,8 @@ static void trySwitchParty(u8 doubles) {
 }
 
 static void switchBack(void) {
-    // u8 playerMons;
     switchParty(0);
     in_doubles=0;
-    // playerMons = CalculatePlayerPartyCount();
-    // gPlayerPartyCount = playerMons; // recalc this because it gets 
     HealPlayerParty();
 }
 
@@ -182,9 +179,6 @@ static void switchParty(u8 doubles) {
     enemyMons = CalculateEnemyPartyCount(); // calc here cause can get messed up before we mix up a multi opponent's team 
 
     for (i = 0; i < numMons; i++) {
-        // bug in this code for 2 player double battles
-        // when that happens, should swap members as follows (me-enemy)
-        // 0-0, 1-3, 2-1, 3-4, 4-2, 5-5 then reverse that when switching back
         struct Pokemon *mon = &gEnemyParty[i];
         struct Pokemon *mon2= &gPlayerParty[i];
         tempMon = *mon2;
@@ -206,6 +200,7 @@ static void switchParty(u8 doubles) {
     gPlayerPartyCount = enemyMons;
     gEnemyPartyCount = playerMons;
 
+    // change team order for double battle vs 2 trainers
     if (doubles==1) {
         for (i = 0; i < 4; i++) {
             struct Pokemon *mon = &gEnemyParty[teamArray[i]];
