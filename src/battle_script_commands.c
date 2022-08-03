@@ -2239,7 +2239,8 @@ void SetMoveEffect(bool8 primary, u8 certain)
     if (gBattleMons[gEffectBattler].status2 & STATUS2_SUBSTITUTE && affectsUser != MOVE_EFFECT_AFFECTS_USER)
         INCREMENT_RESET_RETURN
 
-    if (gBattleCommunication[MOVE_EFFECT_BYTE] <= PRIMARY_STATUS_MOVE_EFFECT)
+    // if (gBattleCommunication[MOVE_EFFECT_BYTE] <= PRIMARY_STATUS_MOVE_EFFECT)
+    if (1==1)
     {
         switch (sStatusFlagsForMoveEffects[gBattleCommunication[MOVE_EFFECT_BYTE]])
         {
@@ -2490,11 +2491,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
     }
     else
     {
-        if (gBattleMons[gEffectBattler].status2 & sStatusFlagsForMoveEffects[gBattleCommunication[MOVE_EFFECT_BYTE]])
-        {
-            gBattlescriptCurrInstr++;
-        }
-        else
+        if (1==1)
         {
             u8 side;
             switch (gBattleCommunication[MOVE_EFFECT_BYTE])
@@ -2869,6 +2866,16 @@ void SetMoveEffect(bool8 primary, u8 certain)
                 BattleScriptPush(gBattlescriptCurrInstr + 1);
                 gBattlescriptCurrInstr = BattleScript_SAtkDown2;
                 break;
+            }
+            if (gBattleCommunication[MOVE_EFFECT_BYTE]!=MOVE_EFFECT_RECOIL_25 &&
+                GetBattlerSide(gEffectBattler) == B_SIDE_PLAYER){
+                gBattleMoveDamage = (gHpDealt);
+                if (gBattleMoveDamage == 0)
+                    gBattleMoveDamage = 1; 
+
+                BattleScriptPush(gBattlescriptCurrInstr + 1);
+                gBattlescriptCurrInstr = sMoveEffectBS_Ptrs[gBattleCommunication[MOVE_EFFECT_BYTE]];
+                // break;
             }
         }
     }
