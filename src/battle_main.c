@@ -1420,7 +1420,8 @@ static void CB2_PreInitMultiBattle(void)
 {
     s32 i;
     u8 playerMultiplierId;
-    s32 numPlayers = MAX_BATTLERS_COUNT;
+    // s32 numPlayers = MAX_BATTLERS_COUNT;
+    s32 numPlayers = 4; // not messing with multi battles for now
     u8 blockMask = 0xF;
     u32 *savedBattleTypeFlags;
     void (**savedCallback)(void);

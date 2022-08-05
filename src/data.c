@@ -11,7 +11,7 @@
 const u16 gMinigameDigits_Pal[] = INCBIN_U16("graphics/link/minigame_digits.gbapal");
 const u32 gMinigameDigits_Gfx[] = INCBIN_U32("graphics/link/minigame_digits.4bpp.lz");
 static const u32 sMinigameDigitsThin_Gfx[] = INCBIN_U32("graphics/link/minigame_digits2.4bpp.lz"); // Unused
-
+//TODO might need to change offset so everything fits on screen
 #define BATTLER_OFFSET(i) (gHeap + 0x8000 + MON_PIC_SIZE * (i))
 
 const struct SpriteFrameImage gBattlerPicTable_PlayerLeft[] =
@@ -45,6 +45,38 @@ const struct SpriteFrameImage gBattlerPicTable_OpponentRight[] =
     BATTLER_OFFSET(14), MON_PIC_SIZE,
     BATTLER_OFFSET(15), MON_PIC_SIZE,
 };
+
+const struct SpriteFrameImage gBattlerPicTable_Opponent1[] =
+{
+    BATTLER_OFFSET(16), MON_PIC_SIZE,
+    BATTLER_OFFSET(17), MON_PIC_SIZE,
+    BATTLER_OFFSET(18), MON_PIC_SIZE,
+    BATTLER_OFFSET(19), MON_PIC_SIZE,
+};
+
+const struct SpriteFrameImage gBattlerPicTable_Opponent2[] =
+{
+    BATTLER_OFFSET(20), MON_PIC_SIZE,
+    BATTLER_OFFSET(21), MON_PIC_SIZE,
+    BATTLER_OFFSET(22), MON_PIC_SIZE,
+    BATTLER_OFFSET(23), MON_PIC_SIZE,
+};
+
+// const struct SpriteFrameImage gBattlerPicTable_Opponent3[] =
+// {
+//     BATTLER_OFFSET(24), MON_PIC_SIZE,
+//     BATTLER_OFFSET(25), MON_PIC_SIZE,
+//     BATTLER_OFFSET(26), MON_PIC_SIZE,
+//     BATTLER_OFFSET(27), MON_PIC_SIZE,
+// };
+
+// const struct SpriteFrameImage gBattlerPicTable_Opponent4[] =
+// {
+//     BATTLER_OFFSET(28), MON_PIC_SIZE,
+//     BATTLER_OFFSET(29), MON_PIC_SIZE,
+//     BATTLER_OFFSET(30), MON_PIC_SIZE,
+//     BATTLER_OFFSET(31), MON_PIC_SIZE,
+// };
 
 const struct SpriteFrameImage gTrainerBackPicTable_Brendan[] =
 {

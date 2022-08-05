@@ -108,7 +108,8 @@ void InitBattleControllers(void)
 static void InitSinglePlayerBtlControllers(void)
 {
     s32 i;
-
+    
+    // multi battle - not changing for now
     if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
     {
         gBattleMainFunc = BeginBattleIntro;
@@ -142,7 +143,7 @@ static void InitSinglePlayerBtlControllers(void)
             gBattlerPositions[3] = B_POSITION_OPPONENT_RIGHT;
         }
 
-        gBattlersCount = MAX_BATTLERS_COUNT;
+        gBattlersCount = 4;
 
         BufferBattlePartyCurrentOrderBySide(0, 0);
         BufferBattlePartyCurrentOrderBySide(1, 0);
@@ -156,6 +157,7 @@ static void InitSinglePlayerBtlControllers(void)
     }
     else if (!(gBattleTypeFlags & BATTLE_TYPE_DOUBLE))
     {
+        // single battle
         gBattleMainFunc = BeginBattleIntro;
 
         if (gBattleTypeFlags & BATTLE_TYPE_SAFARI)
@@ -169,8 +171,33 @@ static void InitSinglePlayerBtlControllers(void)
 
         gBattlerControllerFuncs[1] = SetControllerToOpponent;
         gBattlerPositions[1] = B_POSITION_OPPONENT_LEFT;
+        
+        if (gBattleTypeFlags & BATTLE_TYPE_TRAINER){
+            // count number of enemy mons, set controller accordingly
+            for (i=1; i<gEnemyPartyCount; i++) {
+                gBattlerControllerFuncs[i+1] = SetControllerToOpponent;
+                // could've done lookup table but I'm lazy
+                if (i<MAX_BATTLERS_COUNT-1) { // adding this check since count was lowered to 6
+                    switch(i) {
+                        case 1:
+                            gBattlerPositions[i+1] = B_POSITION_OPPONENT_RIGHT;
+                        case 2:
+                            gBattlerPositions[i+1] = B_POSITION_OPPONENT_1;
+                        case 3:
+                            gBattlerPositions[i+1] = B_POSITION_OPPONENT_2;
+                        case 4:
+                            gBattlerPositions[i+1] = B_POSITION_OPPONENT_3;
+                        case 5:
+                            gBattlerPositions[i+1] = B_POSITION_OPPONENT_4;
+                    }
+                }
+            }
 
-        gBattlersCount = 2;
+            gBattlersCount = 1 + gEnemyPartyCount;
+        }
+        else {
+            gBattlersCount = 2;
+        }
 
         if (gBattleTypeFlags & BATTLE_TYPE_RECORDED)
         {
@@ -211,6 +238,7 @@ static void InitSinglePlayerBtlControllers(void)
     }
     else
     {
+        // double battle
         gBattleMainFunc = BeginBattleIntro;
 
         gBattlerControllerFuncs[0] = SetControllerToPlayer;
@@ -225,7 +253,23 @@ static void InitSinglePlayerBtlControllers(void)
         gBattlerControllerFuncs[3] = SetControllerToOpponent;
         gBattlerPositions[3] = B_POSITION_OPPONENT_RIGHT;
 
-        gBattlersCount = MAX_BATTLERS_COUNT;
+        // count number of enemy mons, set controller accordingly
+        for (i=2; i<gEnemyPartyCount; i++) {
+            gBattlerControllerFuncs[i+2] = SetControllerToOpponent;
+            // could've done lookup table but I'm lazy
+            switch(i) {
+                case 2:
+                    gBattlerPositions[i+2] = B_POSITION_OPPONENT_1;
+                case 3:
+                    gBattlerPositions[i+2] = B_POSITION_OPPONENT_2;
+                case 4:
+                    gBattlerPositions[i+2] = B_POSITION_OPPONENT_3;
+                case 5:
+                    gBattlerPositions[i+2] = B_POSITION_OPPONENT_4;
+            }
+        }
+
+        gBattlersCount = 2+gEnemyPartyCount;
 
         if (gBattleTypeFlags & BATTLE_TYPE_RECORDED)
         {
@@ -615,13 +659,13 @@ static void SetBattlePartyIds(void)
                 }
                 else
                 {
-                    if (GET_BATTLER_SIDE2(i) == B_SIDE_PLAYER)
+                    if (GET_BATTLER_SIDE2(i) == B_SIDE_PLAYER && i<4) // add i<4 to redirect to opponent side
                     {
                         if (GetMonData(&gPlayerParty[j], MON_DATA_HP) != 0
                          && GetMonData(&gPlayerParty[j], MON_DATA_SPECIES) != SPECIES_NONE  // Probably a typo by Game Freak. The rest use SPECIES2.
                          && GetMonData(&gPlayerParty[j], MON_DATA_SPECIES2) != SPECIES_EGG
                          && GetMonData(&gPlayerParty[j], MON_DATA_IS_EGG) == 0
-                         && gBattlerPartyIndexes[i - 2] != j)
+                         && gBattlerPartyIndexes[i - 2] != j) 
                         {
                             gBattlerPartyIndexes[i] = j;
                             break;
@@ -633,7 +677,12 @@ static void SetBattlePartyIds(void)
                          && GetMonData(&gEnemyParty[j], MON_DATA_SPECIES2) != SPECIES_NONE
                          && GetMonData(&gEnemyParty[j], MON_DATA_SPECIES2) != SPECIES_EGG
                          && GetMonData(&gEnemyParty[j], MON_DATA_IS_EGG) == 0
-                         && gBattlerPartyIndexes[i - 2] != j)
+                         && gBattlerPartyIndexes[1] != j // manually check opponent battle indices to make sure same poke isn't sent twice
+                         && gBattlerPartyIndexes[3] != j
+                         && gBattlerPartyIndexes[4] != j
+                        //  && gBattlerPartyIndexes[5] != j
+                        //  && gBattlerPartyIndexes[6] != j
+                         ) 
                         {
                             gBattlerPartyIndexes[i] = j;
                             break;

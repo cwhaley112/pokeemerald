@@ -1893,25 +1893,58 @@ static void Task_StartSendOutAnim(u8 taskId)
     u8 savedActiveBank = gActiveBattler;
 
     gActiveBattler = gTasks[taskId].data[0];
-    if (!IsDoubleBattle() || (gBattleTypeFlags & BATTLE_TYPE_MULTI))
+    if ((gBattleTypeFlags & BATTLE_TYPE_MULTI) || ((!IsDoubleBattle()) && (gEnemyPartyCount==1)))
     {
         gBattleBufferA[gActiveBattler][1] = gBattlerPartyIndexes[gActiveBattler];
         StartSendOutAnim(gActiveBattler, FALSE);
     }
-    else if ((gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS))
-    {
+    // else if (!IsDoubleBattle() && (gEnemyPartyCount>1)) {
+    else if (!(gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS)) {
+        // should cover doubles battles and single battles with 1+ mon
         gBattleBufferA[gActiveBattler][1] = gBattlerPartyIndexes[gActiveBattler];
         StartSendOutAnim(gActiveBattler, FALSE);
+        // increment to mon 2
+        gActiveBattler = (gActiveBattler + 2);
+        gBattleBufferA[gActiveBattler][1] = gBattlerPartyIndexes[gActiveBattler];
+        StartSendOutAnim(gActiveBattler, FALSE);
+
+        // now check if enemy has another mon, if so then send out (only increment by 1 from here)
+        if (gEnemyPartyCount>2) {
+            gActiveBattler = (gActiveBattler + 1);
+            gBattleBufferA[gActiveBattler][1] = gBattlerPartyIndexes[gActiveBattler];
+            StartSendOutAnim(gActiveBattler, FALSE);
+        }
+        if (gEnemyPartyCount>3) {
+            gActiveBattler = (gActiveBattler + 1);
+            gBattleBufferA[gActiveBattler][1] = gBattlerPartyIndexes[gActiveBattler];
+            StartSendOutAnim(gActiveBattler, FALSE);
+        }
+        if (gEnemyPartyCount>4) {
+            gActiveBattler = (gActiveBattler + 1);
+            gBattleBufferA[gActiveBattler][1] = gBattlerPartyIndexes[gActiveBattler];
+            StartSendOutAnim(gActiveBattler, FALSE);
+        }
+        if (gEnemyPartyCount>5) {
+            gActiveBattler = (gActiveBattler + 1);
+            gBattleBufferA[gActiveBattler][1] = gBattlerPartyIndexes[gActiveBattler];
+            StartSendOutAnim(gActiveBattler, FALSE);
+        }
     }
     else
     {
+        // two opponent double battle - TODO
         gBattleBufferA[gActiveBattler][1] = gBattlerPartyIndexes[gActiveBattler];
         StartSendOutAnim(gActiveBattler, FALSE);
-        gActiveBattler ^= BIT_FLANK;
-        gBattleBufferA[gActiveBattler][1] = gBattlerPartyIndexes[gActiveBattler];
-        StartSendOutAnim(gActiveBattler, FALSE);
-        gActiveBattler ^= BIT_FLANK;
     }
+    // else
+    // {
+    //     gBattleBufferA[gActiveBattler][1] = gBattlerPartyIndexes[gActiveBattler];
+    //     StartSendOutAnim(gActiveBattler, FALSE);
+    //     gActiveBattler ^= BIT_FLANK;
+    //     gBattleBufferA[gActiveBattler][1] = gBattlerPartyIndexes[gActiveBattler];
+    //     StartSendOutAnim(gActiveBattler, FALSE);
+    //     gActiveBattler ^= BIT_FLANK;
+    // }
     gBattlerControllerFuncs[gActiveBattler] = Intro_TryShinyAnimShowHealthbox;
     gActiveBattler = savedActiveBank;
     DestroyTask(taskId);

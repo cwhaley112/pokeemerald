@@ -36,18 +36,34 @@ static void CreateBattlerTrace(struct Task *task, u8 taskId);
 EWRAM_DATA static union AffineAnimCmd *sAnimTaskAffineAnim = NULL;
 
 static const struct UCoords8 sBattlerCoords[][MAX_BATTLERS_COUNT] =
-{
+{ // TODO uncomment for 8 max pokes
     { // Single battle
+        // { 72, 80 },
+        // { 176, 40 },
+        // { 48, 40 },
+        // { 112, 80 },
         { 72, 80 },
         { 176, 40 },
         { 48, 40 },
-        { 112, 80 },
+        { 141, 45 },
+        { 106, 55},
+        { 71, 60},
+        // { 36, 65},
+        // { 1, 70},
     },
     { // Double battle
+        // { 32, 80 },
+        // { 200, 40 },
+        // { 90, 88 },
+        // { 152, 32 },
         { 32, 80 },
-        { 200, 40 },
+        { 176, 40 },
         { 90, 88 },
-        { 152, 32 },
+        { 141, 45 },
+        { 106, 55},
+        { 71, 60},
+        // { 36, 65},
+        // { 1, 70},
     },
 };
 
