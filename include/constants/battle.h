@@ -23,12 +23,18 @@
  *   +---------------------------+
  */
 
-#define MAX_BATTLERS_COUNT  4
+// need to make sure nums >=4 redirect to opponent side
+#define MAX_BATTLERS_COUNT  6// TODO eventually change to 7, get rid of player 2nd poke
+// going above 6 makes the game extremely broken, will have to come back to this later
 
 #define B_POSITION_PLAYER_LEFT        0
 #define B_POSITION_OPPONENT_LEFT      1
 #define B_POSITION_PLAYER_RIGHT       2
 #define B_POSITION_OPPONENT_RIGHT     3
+#define B_POSITION_OPPONENT_1         4
+#define B_POSITION_OPPONENT_2         5
+#define B_POSITION_OPPONENT_3         6
+#define B_POSITION_OPPONENT_4         7
 
 // These macros can be used with either battler ID or positions to get the partner or the opposite mon
 #define BATTLE_OPPOSITE(id) ((id) ^ 1)
