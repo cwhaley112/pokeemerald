@@ -1,3 +1,6 @@
+# Switch Teams Mod
+This is a custom mod for Pokemon Emerald, which adds a hook before every trainer battle and has a 50% chance to swap the player's team with their opponent's. Fun fact: I played through this mod and made a [YouTube video](https://youtu.be/pA_4emRVq3w) which got >500,000 views :)
+
 # Pokémon Emerald
 
 This is a decompilation of Pokémon Emerald.
